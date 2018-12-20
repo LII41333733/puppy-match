@@ -7,11 +7,24 @@ import Cards from "../Cards";
 
 
 class Discover extends Component {
-  state = {
-    dogPhoto: "",
-    dogMatchCount: 0,
-    dogArray: []
+
+  constructor(props) {
+    super(props);
+    
+    
+    this.state = {
+      dogPhoto: "",
+      dogMatchCount: 0,
+      dogArray: [],
+      isCardOneClicked: false,
+      cardOne: {},
+      cardTwo: {}
+    }
+    this.removeFriend = this.removeFriend.bind(this);
   }
+
+
+
   componentDidMount() {
     this.getDogPicture();
     this.getDogs();
@@ -70,6 +83,13 @@ class Discover extends Component {
     }).catch(err => console.log(err))
   }
 
+  removeFriend = id => {
+    console.log(this.props)
+    // Filter this.state.friends for friends with an id not equal to the id being removed
+    const dogArray = this.state.dogArray.filter(friend => friend.id !== id);
+    // Set this.state.friends equal to the new friends array
+    this.setState({ dogArray });
+  };
 
   handleUpvote = () => {
     const randomNumber = Math.floor(Math.random() * 3) + 1;
@@ -92,7 +112,10 @@ class Discover extends Component {
         <h1>Dog Match!</h1>
         <div className="row">
           {this.state.dogArray.map((pup, i) =>
-            <Cards key={pup.key} url={pup.url} />
+            <Cards 
+              key={pup.key} 
+              url={pup.url} 
+              removeFriend={this.removeFriend}/>
           )}
         </div>
       </div>
@@ -124,17 +147,15 @@ export default Discover;
 
 
 //variables:
-$isCardOneClicked = false (boolean)
-$cardOne = {} (object)
-$cardTwo = {} (object)
+
 
 
 
 //functions:
-flipCard()
-compareTwoCards()
-removeCards()
-checkGameOver()
+// flipCard()
+// compareTwoCards()
+// removeCards()
+// checkGameOver()
 
 
 
