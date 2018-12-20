@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getRandomDog, get6RandomDogs } from '../../Utils/API';
+import { get6RandomDogs } from '../../Utils/API';
 import Cards from "../Cards";
 
 class Discover extends Component {
@@ -11,18 +11,12 @@ class Discover extends Component {
     bothCardsFlipped: false,
     cardOne: -1,
     cardTwo: -1,
-    hiddenIDs: []
+    hiddenIDs: [2, 3, 5]
   }
   componentDidMount() {
-    this.getDogPicture();
     this.getDogs();
   }
-  getDogPicture = () => {
-    getRandomDog().then(({ data }) => {
-      // console.log(data);
-      this.setState({ dogPhoto: data.message })
-    }).catch(err => console.log(err));
-  }
+
 
   getDogs = () => {
     get6RandomDogs().then(({ data }) => {
@@ -45,11 +39,14 @@ class Discover extends Component {
       data.forEach((dog, i) => {
         dogsArray.push({
           url: dog.url,
-          id: i
+          id: i,
+          active: true,
+          isPicked: false
         })
         dogsArrayCopy.push({
           url: dog.url,
-          id: i
+          id: i,
+          active: true
         })
       })
 
@@ -68,14 +65,17 @@ class Discover extends Component {
       })
 
       console.log(this.state.dogArray)
+
     }).catch(err => console.log(err))
   }
 
 
   flipCard = (id) => {
+    console.log(id)
     if (this.state.bothCardsFlipped) {
-      this.state.hiddenIDs.push(id)
-      console.log(this.state.hiddenIDs)
+      console.log("ended")
+      return false;
+
       //reset
     } else {
       if (!this.state.isCardOneClicked) {
@@ -84,7 +84,6 @@ class Discover extends Component {
           isCardOneClicked: true,
         }, () => {
           console.log("Card One Flipped")
-          // console.log(this.state.cardOne)
         })
       } else {
         this.setState({
@@ -95,6 +94,7 @@ class Discover extends Component {
           if (this.state.cardOne === this.state.cardTwo) {
 
 
+            this.state.hiddenIDs.push(id)
 
 
           } else {
@@ -105,14 +105,11 @@ class Discover extends Component {
               isCardOneClicked: false
             }, () => {
               console.log("Try Again!")
-              // console.log(this.state.cardOne)
             })
           }
         })
       }
     }
-    // console.log(this.state.cardOne)
-
   }
 
   handleUpvote = () => {
@@ -141,17 +138,12 @@ class Discover extends Component {
       <div className="container">
         <h1>Dog Match!</h1>
         <div className="row">
-          {this.state.dogArray.map(pup => (
-
-            console.log(this.state.hiddenIDs),
-
-              <Cards 
-              id = { pup.id }
-            key = { pup.key }
-            url = { pup.url }
-            flipCard = { this.flipCard }
-              />
-          ))}
+          {this.state.dogArray.map(pup => {
+            
+            return(
+            <Cards id={pup.id} key={pup.key} url={pup.url} flipCard={()=> this.flipCard(pup.id)}/>
+            )
+          })}
         </div>
       </div>
     );
@@ -167,3 +159,9 @@ export default Discover;
 
 
 
+  // getDogPicture = () => {
+  //   getRandomDog().then(({ data }) => {
+  //     // console.log(data);
+  //     this.setState({ dogPhoto: data.message })
+  //   }).catch(err => console.log(err));
+  // }
