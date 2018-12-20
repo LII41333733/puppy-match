@@ -2,29 +2,17 @@ import React, { Component } from 'react';
 import { getRandomDog, get6RandomDogs } from '../../Utils/API';
 import Cards from "../Cards";
 
-
-
-
-
 class Discover extends Component {
-
-  constructor(props) {
-    super(props);
-    
-    
-    this.state = {
-      dogPhoto: "",
-      dogMatchCount: 0,
-      dogArray: [],
-      isCardOneClicked: false,
-      cardOne: {},
-      cardTwo: {}
-    }
-    this.removeFriend = this.removeFriend.bind(this);
+  state = {
+    dogPhoto: "",
+    dogMatchCount: 0,
+    dogArray: [],
+    isCardOneClicked: false,
+    bothCardsFlipped: false,
+    cardOne: -1,
+    cardTwo: -1,
+    hiddenIDs: []
   }
-
-
-
   componentDidMount() {
     this.getDogPicture();
     this.getDogs();
@@ -66,13 +54,13 @@ class Discover extends Component {
       })
 
       const fullDogArray = dogsArray.concat(dogsArrayCopy)
-          
-      
+
+
       let fullerDogArray = fullDogArray.map((pup, i) => {
         pup.key = i
         return pup;
       })
-  
+
       fullerDogArray = shuffle(fullerDogArray);
 
       this.setState({
@@ -83,13 +71,49 @@ class Discover extends Component {
     }).catch(err => console.log(err))
   }
 
-  removeFriend = id => {
-    console.log(this.props)
-    // Filter this.state.friends for friends with an id not equal to the id being removed
-    const dogArray = this.state.dogArray.filter(friend => friend.id !== id);
-    // Set this.state.friends equal to the new friends array
-    this.setState({ dogArray });
-  };
+
+  flipCard = (id) => {
+    if (this.state.bothCardsFlipped) {
+      this.state.hiddenIDs.push(id)
+      console.log(this.state.hiddenIDs)
+      //reset
+    } else {
+      if (!this.state.isCardOneClicked) {
+        this.setState({
+          cardOne: id,
+          isCardOneClicked: true,
+        }, () => {
+          console.log("Card One Flipped")
+          // console.log(this.state.cardOne)
+        })
+      } else {
+        this.setState({
+          cardTwo: id,
+          bothCardsFlipped: true
+        }, () => {
+          console.log("Second card flipped!")
+          if (this.state.cardOne === this.state.cardTwo) {
+
+
+
+
+          } else {
+            this.setState({
+              cardOne: -1,
+              cardTwo: -1,
+              bothCardsFlipped: false,
+              isCardOneClicked: false
+            }, () => {
+              console.log("Try Again!")
+              // console.log(this.state.cardOne)
+            })
+          }
+        })
+      }
+    }
+    // console.log(this.state.cardOne)
+
+  }
 
   handleUpvote = () => {
     const randomNumber = Math.floor(Math.random() * 3) + 1;
@@ -105,51 +129,35 @@ class Discover extends Component {
   handleDownvote = () => {
     this.getDogPicture();
   }
+  checkStatus = () => {
+
+  }
 
   render() {
+
+    // console.log(this.props)
+
     return (
       <div className="container">
         <h1>Dog Match!</h1>
         <div className="row">
-          {this.state.dogArray.map((pup, i) =>
-            <Cards 
-              key={pup.key} 
-              url={pup.url} 
-              removeFriend={this.removeFriend}/>
-          )}
+          {this.state.dogArray.map(pup => (
+
+            console.log(this.state.hiddenIDs),
+
+              <Cards 
+              id = { pup.id }
+            key = { pup.key }
+            url = { pup.url }
+            flipCard = { this.flipCard }
+              />
+          ))}
         </div>
       </div>
     );
   }
 }
 export default Discover;
-
-
-// const randomArray = [
-//   {
-//     key: 1,
-//     id: 1,
-//     url: 'www.nfl.com'
-//   },
-//   {
-//     key: 2,
-//     id: 1,
-//     url: 'www.espn.com'
-//   },
-//   {
-//     key: 3,
-//     id: 2,
-//     url: 'www.yahoo.com'
-//   }
-// ]
-
-// id/url > key > random 
-
-
-//variables:
-
-
-
 
 //functions:
 // flipCard()
@@ -159,18 +167,3 @@ export default Discover;
 
 
 
-//when a card is clicked
-  // set $isCardOneClicked to true
-  // $cardOne = this
-  // flipCard()
-//when a second card is clicked
-  // if $isCardOneClicked is true
-    //cardTwo = this
-    //flipCard()
-    //compareTwoCards()
-      //if id $cardOne !== id CardTwo
-        // flipCards()
-      //else
-        //removeCards ()
-          // if Card.length = 0
-            // console.log("Game Over")

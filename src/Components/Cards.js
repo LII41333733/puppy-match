@@ -9,11 +9,13 @@ const styles = {
 }
 
 function Cards(props) {
- return (
-  <div className="col-3 p-0 text-center mt-3">
-   <img src={props.url} alt="Dog" style={styles.dogImage} onClick={() => props.removeFriend(props.id)}/>
-  </div>
- );
+
+    return (
+      <div className="col-3 p-0 text-center mt-3">
+       <img onClick={() => { props.flipCard(props.id);}} src={props.url} alt="Dog" style={styles.dogImage} />
+      </div>
+     );
+  
 }
 
 export default Cards;
