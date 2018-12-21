@@ -132,6 +132,8 @@ class Discover extends Component {
 
   render() {
 
+    // const {dogArray: dogList, searchTerm} = this.state
+    // console.log(dogList)
     // console.log(this.props)
 
     return (
@@ -139,7 +141,7 @@ class Discover extends Component {
         <h1>Dog Match!</h1>
         <div className="row">
           {this.state.dogArray.map(pup => {
-            
+
             return(
             <Cards id={pup.id} key={pup.key} url={pup.url} flipCard={()=> this.flipCard(pup.id)}/>
             )
