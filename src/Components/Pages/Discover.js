@@ -11,8 +11,22 @@ class Discover extends Component {
     bothCardsFlipped: false,
     cardOne: -1,
     cardTwo: -1,
-    hiddenIDs: [2, 3, 5]
+    hiddenIDs: [],
+    styles: {
+      dogImage: {
+        height: "150px",
+        maxWidth: "150px",
+        cursor: "pointer"
+      },
+      blank: {
+        visibility: "hidden"
+      }
+     }
   }
+
+
+
+
   componentDidMount() {
     this.getDogs();
   }
@@ -40,13 +54,10 @@ class Discover extends Component {
         dogsArray.push({
           url: dog.url,
           id: i,
-          active: true,
-          isPicked: false
         })
         dogsArrayCopy.push({
           url: dog.url,
           id: i,
-          active: true
         })
       })
 
@@ -71,46 +82,45 @@ class Discover extends Component {
 
 
   flipCard = (id) => {
-    console.log(id)
-    if (this.state.bothCardsFlipped) {
-      console.log("ended")
-      return false;
-
-      //reset
+    if (!this.state.isCardOneClicked) {
+      this.setState({
+        cardOne: id,
+        isCardOneClicked: true,
+      }, () => {
+        console.log("Card One Flipped")
+      })
     } else {
-      if (!this.state.isCardOneClicked) {
-        this.setState({
-          cardOne: id,
-          isCardOneClicked: true,
-        }, () => {
-          console.log("Card One Flipped")
-        })
-      } else {
-        this.setState({
-          cardTwo: id,
-          bothCardsFlipped: true
-        }, () => {
-          console.log("Second card flipped!")
-          if (this.state.cardOne === this.state.cardTwo) {
+      this.setState({
+        cardTwo: id,
+        bothCardsFlipped: true
+      }, () => {
+        console.log("Second card flipped!")
+        if (this.state.cardOne === this.state.cardTwo) {
+
+          this.state.hiddenIDs.push(id)
+
+          this.setState({
+            bothCardsFlipped: false,
+            isCardOneClicked: false
+          }, () => {
+            console.log("It's a match!")
+          })
 
 
-            this.state.hiddenIDs.push(id)
-
-
-          } else {
-            this.setState({
-              cardOne: -1,
-              cardTwo: -1,
-              bothCardsFlipped: false,
-              isCardOneClicked: false
-            }, () => {
-              console.log("Try Again!")
-            })
-          }
-        })
-      }
+        } else {
+          this.setState({
+            cardOne: -1,
+            cardTwo: -1,
+            bothCardsFlipped: false,
+            isCardOneClicked: false
+          }, () => {
+            console.log("Try Again!")
+          })
+        }
+      })
     }
   }
+
 
   handleUpvote = () => {
     const randomNumber = Math.floor(Math.random() * 3) + 1;
@@ -126,11 +136,13 @@ class Discover extends Component {
   handleDownvote = () => {
     this.getDogPicture();
   }
-  checkStatus = () => {
 
-  }
 
   render() {
+
+
+
+    console.log(this.state.styles)
 
     // const {dogArray: dogList, searchTerm} = this.state
     // console.log(dogList)
@@ -142,13 +154,29 @@ class Discover extends Component {
         <div className="row">
           {this.state.dogArray.map(pup => {
 
-            return(
-            <Cards id={pup.id} key={pup.key} url={pup.url} flipCard={()=> this.flipCard(pup.id)}/>
+// console.log(this.state.hiddenIDs.includes(pup.id))
+
+            return (
+
+              <Cards 
+                id={pup.id} 
+                key={pup.key} 
+                url={pup.url} 
+                flipCard={() => this.flipCard(pup.id)} 
+                styles={
+                  (this.state.hiddenIDs.includes(pup.id))
+                  ?
+                  (this.state.styles.blank)
+                  :
+                  (this.state.styles.dogImage)
+              }
+              />
             )
+
           })}
         </div>
       </div>
-    );
+    )
   }
 }
 export default Discover;
