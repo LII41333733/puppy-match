@@ -4,9 +4,9 @@ import {Link} from 'react-router-dom';
 const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      <Link to="/" className="navbar-brand">Pupster App</Link>
+      <Link to="/" className="navbar-brand">Dog Match!</Link>
       <div className="collapse navbar-collapse" id="navbarNav">
-        <ul className="navbar-nav">
+        {/* <ul className="navbar-nav">
           <li className="nav-item">
             <Link to="/about" 
             className={window.location.pathname === "/about" ? "nav-link active" : "nav-link"}>About</Link>
@@ -20,7 +20,7 @@ const Navbar = () => {
             className={(window.location.pathname === "/search") ? "nav-link active" : "nav-link"}>Search</Link>
           </li>
          
-        </ul>
+        </ul> */}
       </div>
     </nav>
   )

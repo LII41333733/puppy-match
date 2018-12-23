@@ -2,17 +2,20 @@ import React, { Component } from 'react';
 import { get6RandomDogs } from '../../Utils/API';
 import Cards from "../Cards";
 
+
 class Discover extends Component {
+
   state = {
-    dogPhoto: "",
-    dogMatchCount: 0,
-    dogArray: [],
-    isCardOneClicked: false,
-    bothCardsFlipped: false,
-    cardOne: -1,
-    cardTwo: -1,
-    hiddenIDs: [2, 3, 5]
+      dogPhoto: "",
+      dogArray: [],
+      cardOneID: -1,
+      cardTwoID: -1,
+      cardOneKey: -1,
+      cardTwoKey: -1,
+      hiddenIDs: [],
+      message: "Pick a card!"
   }
+
   componentDidMount() {
     this.getDogs();
   }
@@ -21,17 +24,7 @@ class Discover extends Component {
   getDogs = () => {
     get6RandomDogs().then(({ data }) => {
 
-      const shuffle = array => {
-        var currentIndex = array.length, temporaryValue, randomIndex;
-        while (0 !== currentIndex) {
-          randomIndex = Math.floor(Math.random() * currentIndex);
-          currentIndex -= 1;
-          temporaryValue = array[currentIndex];
-          array[currentIndex] = array[randomIndex];
-          array[randomIndex] = temporaryValue;
-        }
-        return array;
-      }
+
 
       const dogsArray = [];
       const dogsArrayCopy = [];
@@ -40,110 +33,135 @@ class Discover extends Component {
         dogsArray.push({
           url: dog.url,
           id: i,
-          active: true,
-          isPicked: false
+
         })
         dogsArrayCopy.push({
           url: dog.url,
           id: i,
-          active: true
+
         })
       })
 
       const fullDogArray = dogsArray.concat(dogsArrayCopy)
 
 
-      let fullerDogArray = fullDogArray.map((pup, i) => {
+      let dogsWithKeys = fullDogArray.map((pup, i) => {
         pup.key = i
         return pup;
       })
 
-      fullerDogArray = shuffle(fullerDogArray);
+      const shuffledDogs = this.shuffleCards(dogsWithKeys);
 
       this.setState({
-        dogArray: fullerDogArray
+        dogArray: shuffledDogs
       })
 
-      console.log(this.state.dogArray)
 
     }).catch(err => console.log(err))
   }
 
+  flipCard = (id, key) => {
 
-  flipCard = (id) => {
-    console.log(id)
-    if (this.state.bothCardsFlipped) {
-      console.log("ended")
-      return false;
 
-      //reset
+
+    if (this.state.cardOneID === -1) {
+
+      this.setCardOne(id, key);
+
     } else {
-      if (!this.state.isCardOneClicked) {
-        this.setState({
-          cardOne: id,
-          isCardOneClicked: true,
-        }, () => {
-          console.log("Card One Flipped")
-        })
-      } else {
-        this.setState({
-          cardTwo: id,
-          bothCardsFlipped: true
-        }, () => {
-          console.log("Second card flipped!")
-          if (this.state.cardOne === this.state.cardTwo) {
 
 
-            this.state.hiddenIDs.push(id)
+      (this.state.cardOneKey === key) ?
+        (this.setState({ message: "Can't click the same card!" })) :
+        (this.setCardTwo(id, key));
 
 
-          } else {
-            this.setState({
-              cardOne: -1,
-              cardTwo: -1,
-              bothCardsFlipped: false,
-              isCardOneClicked: false
-            }, () => {
-              console.log("Try Again!")
-            })
-          }
-        })
-      }
+
+
+
+
     }
   }
 
-  handleUpvote = () => {
-    const randomNumber = Math.floor(Math.random() * 3) + 1;
-    if (randomNumber === 2) {
-      // you match with a dog
-      this.setState({
-        dogMatchCount: this.state.dogMatchCount + 1
-      }, () => this.getDogPicture());
-    } else {
-      this.getDogPicture();
-    }
+
+  setCardOne = (id, key) => {
+
+
+
+
+    this.setState({
+      message: "Find the match!",
+      cardOneID: id,
+      cardOneKey: key,
+    })
   }
-  handleDownvote = () => {
-    this.getDogPicture();
-  }
-  checkStatus = () => {
+
+  setCardTwo = (id, key) => {
+    this.setState({
+      cardTwoID: id,
+      cardTwoKey: key,
+  }, () => {
+    return (this.state.cardOneID === this.state.cardTwoID) ?
+    (this.resetCards("winner", id),
+      this.state.hiddenIDs.push(id)) :
+    (this.resetCards("loser"));
+  })
+}
+
+  resetCards = (result, id) => {
+    this.setState({
+      message: (result === "winner") ? ("It's a match! Get another match!") : ("Not a match! Try Again!"),
+      cardOne: -1,
+      cardTwo: -1,
+      cardOneKey: -1,
+      cardTwoKey: -1,
+    
+
+    })
 
   }
+
+  shuffleCards = (array) => {
+
+    let currentIndex = array.length, temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+    return array;
+  }
+
+
+
 
   render() {
 
-    // const {dogArray: dogList, searchTerm} = this.state
-    // console.log(dogList)
-    // console.log(this.props)
+    console.log(this.props)
+    console.log(this.state)
+
 
     return (
       <div className="container">
-        <h1>Dog Match!</h1>
+        <h1>{this.state.message}</h1>
         <div className="row">
           {this.state.dogArray.map(pup => {
-
-            return(
-            <Cards id={pup.id} key={pup.key} url={pup.url} flipCard={()=> this.flipCard(pup.id)}/>
+            return (
+              <Cards
+                id={pup.id}
+                key={pup.key}
+                url={
+                  (this.state.cardOneKey === pup.key || this.state.cardTwoKey === pup.key) ?
+                    (pup.url) : ("paw.jpg")
+                }
+                flipCard={() => this.flipCard(pup.id, pup.key)}
+                className={
+                  (this.state.hiddenIDs.includes(pup.id))
+                    ? ("blank") : ("dogImage")
+                }
+              />
             )
           })}
         </div>
@@ -151,19 +169,5 @@ class Discover extends Component {
     );
   }
 }
+
 export default Discover;
-
-//functions:
-// flipCard()
-// compareTwoCards()
-// removeCards()
-// checkGameOver()
-
-
-
-  // getDogPicture = () => {
-  //   getRandomDog().then(({ data }) => {
-  //     // console.log(data);
-  //     this.setState({ dogPhoto: data.message })
-  //   }).catch(err => console.log(err));
-  // }
