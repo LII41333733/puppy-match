@@ -26,3 +26,13 @@ h1 {
  cursor: pointer;
  border: 3px solid #2c45da;
 }
+
+.abs-center-x {
+ position: absolute;
+ left: 50%;
+ transform: translateX(-50%);
+}
+
+.navbar {
+ height: 50px;
+}
