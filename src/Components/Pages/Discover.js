@@ -33,12 +33,10 @@ class Discover extends Component {
         dogsArray.push({
           url: dog.url,
           id: i,
-
         })
         dogsArrayCopy.push({
           url: dog.url,
           id: i,
-
         })
       })
 
@@ -163,10 +161,11 @@ class Discover extends Component {
                 }
               />
             )
+
           })}
         </div>
       </div>
-    );
+    )
   }
 }
 
