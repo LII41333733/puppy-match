@@ -10,14 +10,19 @@
  visibility: hidden;
 }
 
+h1 {
+ line-height: 30px;
+
+}
+
 
 /* STATIC */
 
 
 
 .dogImage {
- height: 150px;
- max-width: 150px;
+ height: 175px;
+ max-width: 175px;
  cursor: pointer;
- border: 2px solid blue;
+ border: 3px solid #2c45da;
 }
