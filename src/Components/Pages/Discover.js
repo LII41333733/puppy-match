@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { get6RandomDogs } from '../../Utils/API';
+import { get30RandomDogs } from '../../Utils/API';
 import Cards from "../Cards";
 
 
@@ -13,7 +13,8 @@ class Discover extends Component {
     cardOneKey: -1,
     cardTwoKey: -1,
     hiddenIDs: [],
-    message: "Pick a card!"
+    message: "Pick a card!",
+    round: 1
   }
 
   componentDidMount() {
@@ -21,12 +22,44 @@ class Discover extends Component {
   }
 
   getDogs = () => {
-    get6RandomDogs().then(({ data }) => {
+    get30RandomDogs().then(({ data }) => {
+      this.setState({
+        dogData: data
+      }, () => {
+        this.setDogArrays();
+      })
+    }).catch(err => console.log(err))
+  }
+  
+
+  setDogArrays = () => {
+
+  
+
+      let roundData = [];
+
+      if (this.state.round === 1) {
+        roundData = this.state.dogData.slice(0,6)
+      }
+      if (this.state.round === 2) {
+        roundData = this.state.dogData.slice(6,12)
+      }
+      if (this.state.round === 3) {
+        roundData = this.state.dogData.slice(12,18)
+      }
+      if (this.state.round === 4) {
+        roundData = this.state.dogData.slice(18,24)
+      }
+      if (this.state.round === 5) {
+        roundData = this.state.dogData.slice(24,30)
+      }
+
+      console.log(roundData)
 
       const dogsArray = [];
       const dogsArrayCopy = [];
 
-      data.forEach((dog, i) => {
+      roundData.forEach((dog, i) => {
         dogsArray.push({
           url: dog.url,
           id: i,
@@ -50,8 +83,7 @@ class Discover extends Component {
         dogArray: shuffledDogs
       })
 
-    }).catch(err => console.log(err))
-  }
+    }
 
   flipCard = (id, key) => {
     if (this.state.cardOneID === -1) {
@@ -89,6 +121,7 @@ class Discover extends Component {
       setTimeout(() => {
         if (result === "winner") {
           this.state.hiddenIDs.push(id)
+          this.checkRoundEnd();
         }
         this.setState({
           cardOneID: -1,
@@ -96,7 +129,7 @@ class Discover extends Component {
           cardOneKey: -1,
           cardTwoKey: -1,
         })
-      }, 1000)
+      }, 200)
     })
   }
 
@@ -112,6 +145,25 @@ class Discover extends Component {
     return array;
   }
 
+  checkRoundEnd = () => {
+    if (this.state.hiddenIDs.length === 6) {
+      if (this.state.round === 5) {
+        this.setState({
+          message: "You win!"
+        })
+      } else {
+        this.setState({
+          hiddenIDs: [],
+          round: this.state.round + 1,
+          message: "Pick a card!"
+  
+        }, () => {
+          this.setDogArrays();
+        })
+      }
+    }
+  }
+
 
   render() {
 
@@ -119,11 +171,7 @@ class Discover extends Component {
 
       <div className="container text-center">
 
-        {<h1 className="m-2">
-          {(this.state.dogArray.length / 2 === this.state.hiddenIDs.length) ?
-            (`You win!`) :((this.state.message === "") ?
-              ('\xa0') :(this.state.message))}
-        </h1>}
+        {<h1 className="m-2"> {(this.state.message === "") ? ('\xa0') : (this.state.message)} </h1>}
 
         <div className="row">
 

@@ -2,6 +2,7 @@
   "name": "pupster",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://lii41333733.github.io/puppy-match/", 
   "dependencies": {
     "axios": "^0.18.0",
     "cors": "^2.8.5",
@@ -11,6 +12,8 @@
     "react-scripts": "2.1.1"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
