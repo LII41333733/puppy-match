@@ -2,7 +2,7 @@
   "name": "pupster",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://lii41333733.github.io/puppy-match/", 
+  "homepage": "https://lii41333733.github.io/puppy-match/",
   "dependencies": {
     "axios": "^0.18.0",
     "cors": "^2.8.5",
@@ -27,5 +27,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "gh-pages": "^2.0.1"
+  }
 }
