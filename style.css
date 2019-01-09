@@ -1,0 +1,38 @@
+/* STATE(PROPS) */
+
+.overlay {
+ position:absolute;
+ left:0;
+ background: rgba(255,255,255,.2);
+}
+
+.blank {
+ visibility: hidden;
+}
+
+h1 {
+ line-height: 30px;
+
+}
+
+
+/* STATIC */
+
+
+
+.dogImage {
+ height: 175px;
+ max-width: 175px;
+ cursor: pointer;
+ border: 3px solid #2c45da;
+}
+
+.abs-center-x {
+ position: absolute;
+ left: 50%;
+ transform: translateX(-50%);
+}
+
+.navbar {
+ height: 50px;
+}

@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/puppy-match/precache-manifest.6939644e507796a611114862ab58cb02.js"
+  "/puppy-match/precache-manifest.ecc476a79db2a9aa7683177e0f92a357.js"
 );
 
 workbox.clientsClaim();
